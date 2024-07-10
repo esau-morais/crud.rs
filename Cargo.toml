@@ -10,7 +10,7 @@ actix-web = "4.8.0"
 chrono = { version = "0.4.38", features = ["serde"] }
 diesel = { version = "2.2.1", features = ["postgres", "r2d2", "uuid", "chrono"] }
 diesel_migrations = "2.2.0"
-dotenv = "0.15.0"
+dotenvy = "0.15.7"
 env_logger = "0.11.3"
 listenfd = "1.0.1"
 postgres = "0.19.7"

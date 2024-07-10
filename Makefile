@@ -8,7 +8,7 @@ install:
 	cargo add serde --features derive
 	cargo add chrono --features serde
 	cargo add env_logger
-	cargo add dotenv
+	cargo add dotenvy
 	cargo add uuid --features "serde v4"
 	cargo add diesel --features "postgres r2d2 uuid chrono"
 	cargo add diesel_migrations
