@@ -13,6 +13,15 @@ install:
 	cargo add diesel --features "postgres r2d2 uuid chrono"
 	cargo add diesel_migrations
 
+setup_diesel:
+	diesel setup
+
+generate_migration:
+	diesel migration generate
+
+run_migrations:
+	diesel migration run
+
 build: 
 	cargo build
 

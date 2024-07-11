@@ -2,14 +2,14 @@ use std::{env, io};
 
 use actix_web::{App, HttpServer};
 use listenfd::ListenFd;
-use rust_crud::routes::config::*;
+use rust_crud::{db, routes::config::config};
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
-    dotenvy::dotenv().expect("env variables should be set");
+    db::init();
 
     let mut listenfd = ListenFd::from_env();
-    let mut server = HttpServer::new(|| App::new().configure(config));
+    let mut server = HttpServer::new(move || App::new().configure(config));
 
     server = match listenfd.take_tcp_listener(0)? {
         Some(listener) => server.listen(listener)?,

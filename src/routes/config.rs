@@ -1,9 +1,7 @@
-use actix_web::{web, HttpResponse};
+use actix_web::web;
 
 pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(
-        web::resource("/test")
-            .route(web::get().to(|| HttpResponse::Ok()))
-            .route(web::head().to(|| HttpResponse::MethodNotAllowed())),
-    );
+    let scope = web::scope("/v0");
+
+    cfg.service(scope);
 }

@@ -8,6 +8,7 @@ actix-cors = "0.7.0"
 actix-rt = "2.10.0"
 actix-web = "4.8.0"
 chrono = { version = "0.4.38", features = ["serde"] }
+custom_error = "1.9.2"
 diesel = { version = "2.2.1", features = ["postgres", "r2d2", "uuid", "chrono"] }
 diesel_migrations = "2.2.0"
 dotenvy = "0.15.7"
