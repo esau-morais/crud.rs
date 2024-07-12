@@ -10,10 +10,8 @@ use crate::{
 pub async fn create_post(req: web::Json<NewPost>) -> HttpResponse {
     use crate::schema::posts;
 
-    let new_post = NewPost {
-        title: req.title.to_string(),
-        body: req.body.to_string(),
-    };
+    let new_post = req.into_inner();
+
     let new_post_result = diesel::insert_into(posts::table)
         .values(&new_post)
         .returning(Post::as_returning())

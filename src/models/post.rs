@@ -11,7 +11,9 @@ pub struct Post {
     pub title: String,
     pub body: String,
     pub published: bool,
+    #[serde(rename = "createdAt")]
     pub created_at: Option<NaiveDateTime>,
+    #[serde(rename = "updatedAt")]
     pub updated_at: Option<NaiveDateTime>,
 }
 
@@ -20,4 +22,6 @@ pub struct Post {
 pub struct NewPost {
     pub title: String,
     pub body: String,
+    #[serde(default)]
+    pub published: bool,
 }
