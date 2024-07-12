@@ -1,3 +1,5 @@
+MIGRATION_NAME=
+
 install:
 	cargo install cargo-edit
 	cargo add actix-web
@@ -16,8 +18,11 @@ install:
 setup_diesel:
 	diesel setup
 
-generate_migration:
-	diesel migration generate
+generate_new_migration:
+	diesel migration generate $(MIGRATION_NAME)
+
+generate_diff_migration:
+	diesel migration generate --diff-schema $(MIGRATION_NAME)
 
 run_migrations:
 	diesel migration run

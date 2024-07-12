@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  rustapp:
+  rust_crud:
     container_name: rust_crud
     build:
       context: .
@@ -11,7 +11,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
   db:
     container_name: db
     image: postgres:12
@@ -23,6 +24,11 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pgdata: {}

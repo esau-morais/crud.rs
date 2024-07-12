@@ -1,11 +1,7 @@
 # Build stage
-FROM rust:1.78 as builder
+FROM rust:1.79 as builder
 
 WORKDIR /app
-
-ARG DATABASE_URL
-
-ENV DATABASE_URL=$DATABASE_URL
 
 COPY . . 
 
@@ -16,5 +12,7 @@ FROM debian:buster-slim
 WORKDIR /usr/local/bin
 
 COPY --from=builder /app/target/release/rust_crud .
+
+EXPOSE 8080
 
 CMD ["./rust_crud"]
