@@ -1,0 +1,26 @@
+# get all posts
+curl -X GET http://localhost:8080/v0/posts | json_pp
+
+# get single post by ID
+curl -X GET http://localhost:8080/v0/posts/{id} | json_pp
+
+# create post
+curl -X POST http://localhost:8080/v0/posts \
+-H 'Content-Type: application/json' \
+-d '{
+    "title": "Any Title", 
+    "body": "any body", 
+    "published": false
+}'
+
+# update post
+curl -X PUT http://localhost:8080/v0/posts/{id} \
+-H 'Content-Type: application/json' \
+-d '{
+    "title":"Any Title (Edited)",
+    "body": "any body (edited)",
+    "published": true
+}'
+
+# delete post
+curl -X DELETE http://localhost:8080/v0/posts/{id} \
