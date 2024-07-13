@@ -1,8 +1,8 @@
 # rust_crud
 
-learning rust build a simple crud
+learning rust by building a simple crud
 
-# next steps
+## next steps
 
 - [ ] refactor
   - [ ] create services
