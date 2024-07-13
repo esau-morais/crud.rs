@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   rust_crud:
     container_name: rust_crud
