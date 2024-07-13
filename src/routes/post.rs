@@ -1,5 +1,5 @@
 use actix_web::{delete, get, post, web, HttpResponse};
-use diesel::{query_dsl::methods::FilterDsl, ExpressionMethods, RunQueryDsl, SelectableHelper};
+use diesel::{ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SelectableHelper};
 
 use crate::{
     db::init,
@@ -39,6 +39,34 @@ pub async fn get_posts() -> HttpResponse {
         Ok(all_posts) => {
             let res = serde_json::json!({"status": "success", "posts": all_posts});
             return HttpResponse::Ok().json(res);
+        }
+        Err(err) => {
+            return HttpResponse::InternalServerError()
+                .json(serde_json::json!({"status": "error", "message": format!("{:?}", err)}))
+        }
+    }
+}
+
+#[get("/posts/{id}")]
+pub async fn get_post_by_id(path: web::Path<i32>) -> HttpResponse {
+    use crate::schema::posts;
+
+    let post_id = path.into_inner();
+    let post_result = posts::table
+        .find(post_id)
+        .select(Post::as_select())
+        .first(&mut init())
+        .optional();
+
+    match post_result {
+        Ok(Some(post)) => {
+            let res = serde_json::json!({"status": "success", "post": post});
+            return HttpResponse::Ok().json(res);
+        }
+        Ok(None) => {
+            let message = format!("post with ID {} not found", post_id);
+            return HttpResponse::NotFound()
+                .json(serde_json::json!({"status": "error", "message": message}));
         }
         Err(err) => {
             return HttpResponse::InternalServerError()
