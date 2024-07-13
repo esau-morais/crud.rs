@@ -1,9 +1,10 @@
-use actix_web::{delete, get, post, web, HttpResponse};
+use actix_web::{delete, get, post, put, web, HttpResponse};
+use chrono::Utc;
 use diesel::{ExpressionMethods, OptionalExtension, QueryDsl, RunQueryDsl, SelectableHelper};
 
 use crate::{
     db::init,
-    models::post::{NewPost, Post},
+    models::post::{NewPost, Post, UpdatePost},
 };
 
 #[post("/posts/create")]
@@ -12,6 +13,7 @@ pub async fn create_post(req: web::Json<NewPost>) -> HttpResponse {
 
     let new_post = req.into_inner();
 
+    // TODO: check Result is of type unknown
     let new_post_result = diesel::insert_into(posts::table)
         .values(&new_post)
         .returning(Post::as_returning())
@@ -33,6 +35,7 @@ pub async fn create_post(req: web::Json<NewPost>) -> HttpResponse {
 pub async fn get_posts() -> HttpResponse {
     use crate::schema::posts::dsl::*;
 
+    // TODO: check Result is of type unknown
     let posts_result = posts.load::<Post>(&mut init());
 
     match posts_result {
@@ -52,6 +55,7 @@ pub async fn get_post_by_id(path: web::Path<i32>) -> HttpResponse {
     use crate::schema::posts;
 
     let post_id = path.into_inner();
+    // TODO: check Result is of type unknown
     let post_result = posts::table
         .find(post_id)
         .select(Post::as_select())
@@ -72,6 +76,41 @@ pub async fn get_post_by_id(path: web::Path<i32>) -> HttpResponse {
             return HttpResponse::InternalServerError()
                 .json(serde_json::json!({"status": "error", "message": format!("{:?}", err)}))
         }
+    }
+}
+
+#[put("/posts/{id}")]
+pub async fn update_post(path: web::Path<i32>, req: web::Json<UpdatePost>) -> HttpResponse {
+    use crate::schema::posts::dsl::*;
+
+    let post_id = path.into_inner();
+    let current_post = req.into_inner();
+    let now = Utc::now().naive_utc();
+
+    // TODO: check Result is of type unknown
+    let updated_post = diesel::update(posts.filter(id.eq(post_id)))
+        .set(&UpdatePost {
+            updated_at: Some(now),
+            ..current_post
+        })
+        .get_result::<Post>(&mut init());
+
+    match updated_post {
+        Ok(post) => {
+            let res = serde_json::json!({"status": "success", "post": post});
+            return HttpResponse::Ok().json(res);
+        }
+        Err(err) => match err {
+            diesel::result::Error::NotFound => {
+                let message = format!("post with ID {} not found", post_id);
+                let res = serde_json::json!({"status": "error", "message": message});
+                return HttpResponse::NotFound().json(res);
+            }
+            _ => {
+                return HttpResponse::InternalServerError()
+                    .json(serde_json::json!({"status": "error", "message": format!("{:?}", err)}))
+            }
+        },
     }
 }
 
