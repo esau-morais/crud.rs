@@ -62,7 +62,8 @@ pub async fn delete_post(path: web::Path<i32>) -> HttpResponse {
                 return HttpResponse::NotFound().json(res);
             }
             _ => {
-                panic!("database error: {}", err);
+                return HttpResponse::InternalServerError()
+                    .json(serde_json::json!({"status": "error", "message": format!("{:?}", err)}))
             }
         },
     };
