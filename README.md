@@ -4,10 +4,7 @@ learning rust by building a simple crud
 
 ## next steps
 
-- [ ] refactor
-  - [ ] create services
-  - [ ] create response pattern
-  - [ ] improve types
+- [x] improve types
 - [ ] integration tests
 - [ ] front-end (react.js?)
 - [ ] deploy

@@ -3,7 +3,7 @@ use chrono::NaiveDateTime;
 use diesel::{pg::Pg, prelude::*};
 use serde::{Deserialize, Serialize};
 
-#[derive(AsChangeset, Queryable, Selectable, Serialize)]
+#[derive(AsChangeset, Debug, Queryable, Selectable, Serialize, Deserialize)]
 #[diesel(table_name = posts)]
 #[diesel(check_for_backend(Pg))]
 pub struct Post {
@@ -17,13 +17,13 @@ pub struct Post {
     pub updated_at: Option<NaiveDateTime>,
 }
 
-#[derive(Insertable, Deserialize, Debug)]
+#[derive(Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = posts)]
 pub struct NewPost {
     pub title: String,
     pub body: String,
     #[serde(default)]
-    pub published: bool,
+    pub published: Option<bool>,
 }
 
 #[derive(AsChangeset, Insertable, Deserialize, Debug)]

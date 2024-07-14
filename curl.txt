@@ -5,7 +5,7 @@ curl -X GET http://localhost:8080/v0/posts | json_pp
 curl -X GET http://localhost:8080/v0/posts/{id} | json_pp
 
 # create post
-curl -X POST http://localhost:8080/v0/posts \
+curl -X POST http://localhost:8080/v0/posts/create \
 -H 'Content-Type: application/json' \
 -d '{
     "title": "Any Title", 

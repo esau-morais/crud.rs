@@ -1706,6 +1706,7 @@ dependencies = [
  "diesel_migrations",
  "dotenvy",
  "env_logger",
+ "lazy_static",
  "listenfd",
  "postgres",
  "r2d2",
