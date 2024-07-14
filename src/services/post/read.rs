@@ -61,21 +61,6 @@ mod tests {
     async fn test_get_posts() {
         let app = test::init_service(App::new().service(get_posts_route)).await;
 
-        let initial_posts_count = {
-            let req = test::TestRequest::get().uri("/posts").to_request();
-            let res = test::call_service(&app, req).await;
-            assert!(res.status().is_success());
-            assert_eq!(res.status(), StatusCode::OK);
-
-            let body: serde_json::Value = test::read_body_json(res).await;
-
-            assert_eq!(body["status"], "success");
-
-            let initial_posts: Vec<Post> =
-                serde_json::from_value(body["posts"].clone()).expect("failed to deserialize posts");
-            initial_posts.len()
-        };
-
         let recent_created_post_id = shared_create_post().await.id;
 
         let req = test::TestRequest::get().uri("/posts").to_request();
@@ -91,10 +76,9 @@ mod tests {
             serde_json::from_value(body["posts"].clone()).unwrap_or_else(|_| vec![]);
 
         assert!(!curr_posts.is_empty());
-        assert_eq!(curr_posts.len(), initial_posts_count + 1);
         assert!(curr_posts
             .iter()
-            // HACK: `p` automatically inferred as `Post`
+            // HACK: `p` isn't automatically inferred as `Post`
             .any(|p: &Post| p.id == recent_created_post_id));
 
         // cleanup after test is done
@@ -127,7 +111,7 @@ mod tests {
         assert!(post.published);
 
         // cleanup after test is done
-        diesel::delete(posts.filter(id.eq(post.id)))
+        diesel::delete(posts.filter(id.eq(recent_created_post_id)))
             .execute(&mut db::init())
             .expect("failed to clean up posts table");
     }

@@ -26,7 +26,7 @@ pub struct NewPost {
     pub published: Option<bool>,
 }
 
-#[derive(AsChangeset, Insertable, Deserialize, Debug)]
+#[derive(AsChangeset, Insertable, Serialize, Deserialize, Debug)]
 #[diesel(table_name = posts)]
 pub struct UpdatePost {
     pub title: Option<String>,
