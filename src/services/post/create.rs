@@ -29,10 +29,13 @@ pub async fn create_post(post: web::Json<NewPost>) -> HttpResponse {
 #[cfg(test)]
 mod tests {
     use actix_web::{http::StatusCode, test, web, App};
+    use diesel::{query_dsl::methods::FilterDsl, ExpressionMethods, RunQueryDsl};
 
     use crate::{
+        db,
         models::post::{NewPost, Post},
         routes::post::create_post_route,
+        schema::posts::{dsl::id, dsl::posts},
     };
 
     #[actix_web::test]
@@ -64,5 +67,10 @@ mod tests {
         assert_eq!(post.title, "Any Title");
         assert_eq!(post.body, "any body");
         assert!(post.published);
+
+        // cleanup after test is done
+        diesel::delete(posts.filter(id.eq(post.id)))
+            .execute(&mut db::init())
+            .expect("failed to clean up posts table");
     }
 }
