@@ -46,14 +46,19 @@ mod tests {
     use crate::{
         db,
         models::post::{Post, UpdatePost},
-        routes::post::update_post_route,
         schema::posts::dsl::{id, posts},
         shared::post::shared_create_post,
     };
 
     #[actix_web::test]
     async fn test_update_post() {
-        let app = test::init_service(App::new().service(update_post_route)).await;
+        let app = test::init_service(
+            App::new().service(
+                web::resource("/posts/{id}")
+                    .route(web::put().to(crate::services::post::update::update_post)),
+            ),
+        )
+        .await;
 
         let updated_post = UpdatePost {
             title: Some(String::from("Any Title (edited)")),
@@ -92,7 +97,13 @@ mod tests {
 
     #[actix_web::test]
     async fn test_try_update_unexistent_post_by_id() {
-        let app = test::init_service(App::new().service(update_post_route)).await;
+        let app = test::init_service(
+            App::new().service(
+                web::resource("/posts/{id}")
+                    .route(web::put().to(crate::services::post::update::update_post)),
+            ),
+        )
+        .await;
 
         let recent_created_post_id = shared_create_post().await.id;
 

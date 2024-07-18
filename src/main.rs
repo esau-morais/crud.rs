@@ -3,10 +3,7 @@ use std::{env, io};
 use actix_cors::Cors;
 use actix_web::{http::header, middleware::Logger, App, HttpServer};
 use listenfd::ListenFd;
-use rust_crud::{
-    db,
-    routes::{config::config, health},
-};
+use rust_crud::{db, routes::config::config};
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
@@ -26,7 +23,6 @@ async fn main() -> io::Result<()> {
             .supports_credentials();
         App::new()
             .app_data(actix_web::web::Data::new(db::init()))
-            .service(health::check_health)
             .configure(config)
             .wrap(cors)
             .wrap(Logger::default())

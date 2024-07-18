@@ -1,15 +1,21 @@
 use actix_web::{test, web, App};
 
-use crate::models::post::{NewPost, Post};
-use crate::routes::post::create_post_route;
+use crate::{
+    models::post::{NewPost, Post},
+    services::post::create::create_post,
+};
 
 pub async fn shared_create_post() -> Post {
-    let app = test::init_service(App::new().service(create_post_route)).await;
+    let app = test::init_service(
+        App::new().service(web::resource("/posts/create").route(web::post().to(create_post))),
+    )
+    .await;
 
     let new_post = NewPost {
         title: String::from("Any Title"),
         body: String::from("any body"),
         published: Some(true),
+        user_id: 1,
     };
     let payload = web::Json(new_post);
 

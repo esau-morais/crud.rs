@@ -1,6 +1,5 @@
-use actix_web::{get, HttpResponse};
+use actix_web::HttpResponse;
 
-#[get("/v0/health")]
-pub async fn check_health() -> HttpResponse {
+pub async fn health_checker() -> HttpResponse {
     HttpResponse::Ok().json(serde_json::json!({"status": "success", "message": "hello, world"}))
 }

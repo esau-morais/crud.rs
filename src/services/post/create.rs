@@ -34,18 +34,24 @@ mod tests {
     use crate::{
         db,
         models::post::{NewPost, Post},
-        routes::post::create_post_route,
         schema::posts::{dsl::id, dsl::posts},
     };
 
     #[actix_web::test]
     async fn test_create_post() {
-        let app = test::init_service(App::new().service(create_post_route)).await;
+        let app = test::init_service(
+            App::new().service(
+                web::resource("/posts/create")
+                    .route(web::post().to(crate::services::post::create::create_post)),
+            ),
+        )
+        .await;
 
         let new_post = NewPost {
             title: String::from("Any Title"),
             body: String::from("any body"),
             published: Some(true),
+            user_id: 1,
         };
         let payload = web::Json(new_post);
 

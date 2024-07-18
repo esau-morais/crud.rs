@@ -36,19 +36,24 @@ pub async fn delete_post(path: web::Path<i32>) -> HttpResponse {
 
 #[cfg(test)]
 mod tests {
-    use actix_web::{http::StatusCode, test, App};
+    use actix_web::{http::StatusCode, test, web, App};
     use diesel::{query_dsl::methods::FilterDsl, ExpressionMethods, RunQueryDsl};
 
     use crate::{
         db,
-        routes::post::delete_post_route,
         schema::posts::dsl::{id, posts},
         shared::post::shared_create_post,
     };
 
     #[actix_web::test]
     async fn test_delete_post_by_id() {
-        let app = test::init_service(App::new().service(delete_post_route)).await;
+        let app = test::init_service(
+            App::new().service(
+                web::resource("/posts/{id}")
+                    .route(web::delete().to(crate::services::post::delete::delete_post)),
+            ),
+        )
+        .await;
 
         let recent_created_post_id = shared_create_post().await.id;
         let req = test::TestRequest::delete()
@@ -66,7 +71,13 @@ mod tests {
 
     #[actix_web::test]
     async fn test_try_delete_unexistent_post() {
-        let app = test::init_service(App::new().service(delete_post_route)).await;
+        let app = test::init_service(
+            App::new().service(
+                web::resource("/posts/{id}")
+                    .route(web::delete().to(crate::services::post::delete::delete_post)),
+            ),
+        )
+        .await;
 
         let recent_created_post_id = shared_create_post().await.id;
 

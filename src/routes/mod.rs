@@ -1,3 +1,3 @@
 pub mod config;
 pub mod health;
-pub mod post;
+pub mod not_found;

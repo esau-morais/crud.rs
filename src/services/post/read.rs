@@ -46,20 +46,22 @@ pub async fn get_post_by_id(path: web::Path<i32>) -> HttpResponse {
 
 #[cfg(test)]
 mod tests {
-    use actix_web::{http::StatusCode, test, App};
+    use actix_web::{http::StatusCode, test, web, App};
     use diesel::{query_dsl::methods::FilterDsl, ExpressionMethods, RunQueryDsl};
 
     use crate::{
         db,
         models::post::Post,
-        routes::post::{get_post_by_id_route, get_posts_route},
         schema::posts::dsl::{id, posts},
         shared::post::shared_create_post,
     };
 
     #[actix_web::test]
     async fn test_get_posts() {
-        let app = test::init_service(App::new().service(get_posts_route)).await;
+        let app = test::init_service(App::new().service(
+            web::resource("/posts").route(web::get().to(crate::services::post::read::get_posts)),
+        ))
+        .await;
 
         let recent_created_post_id = shared_create_post().await.id;
 
@@ -89,7 +91,13 @@ mod tests {
 
     #[actix_web::test]
     async fn test_get_post_by_id() {
-        let app = test::init_service(App::new().service(get_post_by_id_route)).await;
+        let app = test::init_service(
+            App::new().service(
+                web::resource("/posts/{id}")
+                    .route(web::get().to(crate::services::post::read::get_post_by_id)),
+            ),
+        )
+        .await;
 
         let recent_created_post_id = shared_create_post().await.id;
         let req = test::TestRequest::get()
@@ -118,7 +126,13 @@ mod tests {
 
     #[actix_web::test]
     async fn test_get_unexistent_post_by_id() {
-        let app = test::init_service(App::new().service(get_post_by_id_route)).await;
+        let app = test::init_service(
+            App::new().service(
+                web::resource("/posts/{id}")
+                    .route(web::get().to(crate::services::post::read::get_post_by_id)),
+            ),
+        )
+        .await;
 
         let recent_created_post_id = shared_create_post().await.id;
 
