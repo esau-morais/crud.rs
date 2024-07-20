@@ -27,7 +27,7 @@ pub struct NewPost {
     pub user_id: i32,
 }
 
-#[derive(AsChangeset, Insertable, Serialize, Deserialize, Debug)]
+#[derive(AsChangeset, Serialize, Deserialize, Debug)]
 #[diesel(table_name = posts)]
 #[serde(rename_all = "camelCase")]
 pub struct UpdatePost {

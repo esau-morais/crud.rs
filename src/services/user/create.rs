@@ -2,7 +2,7 @@ use actix_web::{web, HttpResponse};
 use diesel::{result, RunQueryDsl, SelectableHelper};
 
 use crate::{
-    db::init,
+    core::config::db::init_db,
     models::user::{NewUser, User},
 };
 
@@ -14,7 +14,7 @@ pub async fn create_user(user: web::Json<NewUser>) -> HttpResponse {
     let new_user_result: Result<User, result::Error> = diesel::insert_into(users)
         .values(&new_user)
         .returning(User::as_returning())
-        .get_result::<User>(&mut init());
+        .get_result::<User>(&mut init_db().get().unwrap());
 
     match new_user_result {
         Ok(user) => {
