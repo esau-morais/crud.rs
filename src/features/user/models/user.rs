@@ -11,19 +11,11 @@ pub struct User {
     pub id: i32,
     pub email: String,
     pub name: String,
-    pub role: String,
-    #[serde(skip_serializing)]
     pub password: String,
+    pub role: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
 
-#[derive(Insertable, Serialize, Deserialize, Debug)]
-#[diesel(table_name = users)]
-pub struct NewUser {
-    pub name: String,
-    pub email: String,
-    #[serde(default)]
-    pub role: Option<String>,
-    pub password: String,
-}
+
+

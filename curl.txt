@@ -10,7 +10,8 @@ curl -X POST http://localhost:8080/v0/posts \
 -d '{
     "title": "Any Title", 
     "body": "any body", 
-    "published": false
+    "published": false.
+    "user_id": 1
 }'
 
 # update post
@@ -23,4 +24,12 @@ curl -X PUT http://localhost:8080/v0/posts/{id} \
 }'
 
 # delete post
-curl -X DELETE http://localhost:8080/v0/posts/{id} \
+curl -X DELETE http://localhost:8080/v0/posts/{id}
+
+# login
+curl -X POST http://localhost:8080/v0/auth/login \
+-H 'Content-Type: application/json' \
+-d '{
+    "email": "any@example.com", 
+    "password": "@Any1234"
+}'

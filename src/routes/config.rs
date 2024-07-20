@@ -1,12 +1,16 @@
 use actix_web::web;
 
-use crate::{features::post, services::user::create::create_user};
+use crate::features::{auth, post};
 
 use super::{health::health_checker, not_found::route_not_found};
 
 pub fn config(cfg: &mut web::ServiceConfig) {
     let scope = web::scope("/v0")
         .service(web::resource("/health_checker").route(web::get().to(health_checker)))
+        .service(
+            web::scope("/auth")
+                .service(web::resource("/login").route(web::post().to(auth::controller::login))),
+        )
         .service(
             web::scope("/posts")
                 .route("", web::post().to(post::controller::create_post))
@@ -15,7 +19,6 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                 .route("/{id}", web::put().to(post::controller::update_post))
                 .route("/{id}", web::delete().to(post::controller::delete_post)),
         )
-        .service(web::resource("/user").route(web::post().to(create_user)))
         .default_service(web::route().to(route_not_found));
 
     cfg.service(scope);

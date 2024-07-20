@@ -1,8 +1,10 @@
 use std::{env, io};
 
-use actix_cors::Cors;
-use actix_web::{http::header, middleware::Logger, App, HttpServer};
-use rust_crud::{core::config::db::init_db, routes::config::config};
+use actix_web::{middleware::Logger, App, HttpServer};
+use rust_crud::{
+    core::{config::db::init_db, middlewares::cors::cors},
+    routes::config::config,
+};
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
@@ -13,20 +15,9 @@ async fn main() -> io::Result<()> {
     init_db();
 
     let server = HttpServer::new(move || {
-        let cors = Cors::default()
-            .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
-            .allowed_origin("http://localhost:3000")
-            .allowed_headers(vec![
-                header::CONTENT_TYPE,
-                header::AUTHORIZATION,
-                header::CONTENT_ENCODING,
-                header::ACCEPT,
-            ])
-            .supports_credentials();
-
         App::new()
             .wrap(Logger::default())
-            .wrap(cors)
+            .wrap(cors())
             // TODO: create `AppState` to prevent too many clients psql error
             // .app_data(actix_web::web::Data::new(init_db()))
             .configure(config)
