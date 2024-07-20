@@ -6,5 +6,5 @@ learning rust by building a simple crud
 
 - [x] improve types
 - [ ] integration tests
-- [ ] front-end (react.js?)
+- [ ] front-end (astro)
 - [ ] deploy
