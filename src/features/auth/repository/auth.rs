@@ -15,6 +15,7 @@ use crate::{
     },
     schema::users::{self, dsl::*},
 };
+use bcrypt::verify;
 use diesel::{prelude::*, ExpressionMethods, RunQueryDsl};
 
 #[derive(Clone)]
@@ -43,9 +44,15 @@ impl IAuthRepository for AuthRepository {
                     email: u.email,
                     password: u.password,
                 };
-                AuthToken::generate_token(&login_info)
-                    .map(AuthEntity::new)
-                    .map_err(|_| CustomError::InvalidCredentials)
+
+                (!&login_info.password.is_empty()
+                    && verify(params.password.as_bytes(), &login_info.password).unwrap())
+                .then(|| {
+                    AuthToken::generate_token(&login_info)
+                        .map(AuthEntity::new)
+                        .map_err(|_| CustomError::InternalError)
+                })
+                .unwrap_or(Err(CustomError::InvalidCredentials))
             })
             .map_err(|_| CustomError::UserNotFoundError)?
     }

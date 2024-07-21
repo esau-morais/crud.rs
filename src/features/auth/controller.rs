@@ -16,5 +16,5 @@ pub async fn login(params: web::Json<Login>) -> AppResult<HttpResponse> {
 
     auth_service
         .login(params.into_inner())
-        .map(|_| ResponseBody::<()>::success(None).into())
+        .map(|data| ResponseBody::success(Some(data)).into())
 }
