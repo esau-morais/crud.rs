@@ -27,13 +27,13 @@ impl FromRequest for AuthMiddleware {
         let user_repo = UserRepository::new(init_db().clone());
         let user_service = UserService::new(Arc::new(user_repo.clone()));
 
-        let auth_header = req
-            .headers()
-            .get(AUTHORIZATION)
-            .cloned()
-            .expect("authorization headers must be provided");
+        let auth_header = req.headers().get(AUTHORIZATION).cloned();
 
         Box::pin(async move {
+            let auth_header = auth_header.ok_or_else(|| CustomError::UnauthorizedMessage {
+                message: "authorization header not found".to_string(),
+            })?;
+
             if !is_auth_header_valid(&auth_header) {
                 return Err(CustomError::UnauthorizedMessage {
                     message: "invalid authorization headers".to_string(),
