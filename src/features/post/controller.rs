@@ -15,12 +15,15 @@ use super::{
     service::post::{IPostService, PostService},
 };
 
-pub async fn create_post(_: AuthMiddleware, params: web::Json<NewPost>) -> AppResult<HttpResponse> {
+pub async fn create_post(
+    auth: AuthMiddleware,
+    params: web::Json<NewPost>,
+) -> AppResult<HttpResponse> {
     let post_repo = PostRepository::new(init_db().clone());
     let post_service = PostService::new(Arc::new(post_repo.clone()));
 
     post_service
-        .create_post(params.into_inner())
+        .create_post(auth.user.id, params.into_inner())
         .map(|_| ResponseBody::<()>::success(None).into())
 }
 

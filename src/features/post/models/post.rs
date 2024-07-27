@@ -24,7 +24,7 @@ pub struct NewPost {
     pub body: String,
     #[serde(default)]
     pub published: Option<bool>,
-    pub user_id: i32,
+    pub user_id: Option<i32>,
 }
 
 #[derive(AsChangeset, Serialize, Deserialize, Debug)]

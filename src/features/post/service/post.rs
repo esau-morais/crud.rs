@@ -18,7 +18,7 @@ impl PostService {
 }
 
 pub trait IPostService: Send + Sync {
-    fn create_post(&self, params: NewPost) -> AppResult<String>;
+    fn create_post(&self, user_id: i32, params: NewPost) -> AppResult<String>;
     fn get_posts(&self) -> AppResult<Vec<Post>>;
     fn get_post_by_id(&self, post_id: i32) -> AppResult<PostEntity>;
     fn update_post(&self, post_id: i32, params: UpdatePost) -> AppResult<PostEntity>;
@@ -26,9 +26,12 @@ pub trait IPostService: Send + Sync {
 }
 
 impl IPostService for PostService {
-    fn create_post(&self, params: NewPost) -> AppResult<String> {
+    fn create_post(&self, user_id: i32, params: NewPost) -> AppResult<String> {
         self.post_repo
-            .create(params)
+            .create(NewPost {
+                user_id: Some(user_id),
+                ..params
+            })
             .map_err(|e| CustomError::BadRequest {
                 message: e.to_string(),
             })
