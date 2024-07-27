@@ -4,6 +4,7 @@ use actix_web::{http::StatusCode, web, HttpResponse};
 
 use crate::core::{
     config::db::init_db,
+    middlewares::auth::AuthMiddleware,
     response::{Diagnostic, ResponseBody},
     types::AppResult,
 };
@@ -14,7 +15,7 @@ use super::{
     service::post::{IPostService, PostService},
 };
 
-pub async fn create_post(params: web::Json<NewPost>) -> AppResult<HttpResponse> {
+pub async fn create_post(_: AuthMiddleware, params: web::Json<NewPost>) -> AppResult<HttpResponse> {
     let post_repo = PostRepository::new(init_db().clone());
     let post_service = PostService::new(Arc::new(post_repo.clone()));
 
