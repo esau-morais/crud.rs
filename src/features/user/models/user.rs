@@ -17,5 +17,13 @@ pub struct User {
     pub updated_at: NaiveDateTime,
 }
 
-
-
+#[derive(Insertable, Serialize, Deserialize, Debug)]
+#[diesel(table_name = users)]
+#[serde(rename_all = "camelCase")]
+pub struct NewUser {
+    pub email: String,
+    pub name: String,
+    pub password: String,
+    #[serde(default)]
+    pub role: Option<String>,
+}
