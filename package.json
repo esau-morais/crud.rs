@@ -1,0 +1,15 @@
+{
+  "name": "crud",
+  "version": "1.0.0",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "client": "pnpm --filter=./apps/client dev",
+    "server:prepare": "docker compose -f ./apps/server/docker-compose.yml up -d",
+    "server:dev": "cargo watch -x run -w ./apps/server"
+  },
+  "devDependencies": {
+    "eslint": "^9.8.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
+  }
+}

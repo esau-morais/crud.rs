@@ -25,8 +25,8 @@ pub fn config(cfg: &mut web::ServiceConfig) {
                         .route(web::delete().to(post::controller::delete_post)),
                 ),
         )
-        .service(web::resource("/user").route(web::post().to(user::controller::register)))
-        .default_service(web::route().to(route_not_found));
+        .service(web::resource("/user").route(web::post().to(user::controller::register)));
 
-    cfg.service(scope);
+    cfg.service(scope)
+        .default_service(web::route().to(route_not_found));
 }
